@@ -16,11 +16,6 @@ public class EditDistance implements EditDistanceInterface {
 		int m = s1.length();
 		int n = s2.length();
 		int[][] memoize = new int[m+1][n+1]; // array where memoized values are stored
-		for (int i=0; i<m+1;i++){
-			for (int j=0; j<n+1; j++){
-				memoize[i][j]=-1;
-			}
-		}
 		for (int i = 0; i < m + 1; i++) { // initialisation of memoize
 			memoize[i][0] = i*this.c_d;
 		}
@@ -81,8 +76,9 @@ public class EditDistance implements EditDistanceInterface {
 
 	public List<String> getMinimalEditSequence(String s1, String s2) {
 		int x=1;
-		int i=s1.length()-1;
-		int j=s2.length()-1;
+		int compteur=s2.length()-1;
+		int i=s1.length();
+		int j=s2.length();
 		String current=s2;
 		int[][] tab;
 		int trueValue= getEditDistanceDPminimal(s1, s2);
@@ -96,28 +92,35 @@ public class EditDistance implements EditDistanceInterface {
 		}
 		//we find the path
 		while (true){
-			if (i==0){
+			if (compteur==0){
 				return path;
 			}
-			if (tab[i][j]==tab[i-1][j-1]){
+			if (i>0&&j>0&&tab[i][j]==tab[i-1][j-1]){
 				i--;
 				j--;
-			}
-			else if (tab[i][j]==tab[i-1][j-1]+this.c_r){
-				path.addFirst("replace("+i+","+current.charAt(i)+")");
-				i--;
-				j--;
-			}
-			else if (tab[i][j]==tab[i-1][j]+this.c_d){
-				path.addFirst("delete"+"("+i+")");
-				current=current.substring(0,i+1)+"a"+current.substring(i,current.length());
-				i--;
+				compteur--;
 				
 			}
-			else if (tab[i][j]==tab[i][j-1]+this.c_i){
-				current=current.substring(0,i)+current.substring(i,current.length());
-				path.addFirst("insert("+"("+i+","+current.charAt(i)+")");
+			else if (i>0&&j>0&&tab[i][j]==tab[i-1][j-1]+this.c_r){
+				i--;
 				j--;
+				path.addFirst("replace("+(compteur)+","+current.charAt(compteur)+")");
+				compteur--;
+				
+				
+				
+			}
+			else if (i>0&&tab[i][j]==tab[i-1][j]+this.c_d){
+				i--;
+				path.addFirst("delete"+"("+(compteur)+")");
+				
+				
+			}
+			else if (j>0&&tab[i][j]==tab[i][j-1]+this.c_i){
+				j--;
+				compteur--;
+				path.addFirst("insert("+(compteur)+","+current.charAt(compteur)+")");
+				
 			}
 		}
 	}
@@ -127,11 +130,6 @@ public class EditDistance implements EditDistanceInterface {
 		int m = s1.length();
 		int n = s2.length();
 		int[][] memoize = new int[m+1][n+1]; // array where memoized values are stored
-		for (int i=0; i<m+1;i++){
-			for (int j=0; j<n+1; j++){
-				memoize[i][j]=-1;
-			}
-		}
 		for (int i = 0; i < m + 1; i++) { // initialisation of memoize
 			memoize[i][0] = i*this.c_d;
 		}
