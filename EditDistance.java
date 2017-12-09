@@ -88,7 +88,6 @@ public class EditDistance implements EditDistanceInterface {
 			}
 			x++;
 		}
-		Test.affiche(getEditDistanceDP(s1, s2));
 		//we find the path
 		while (i!=0 || j!=0){
 			
@@ -99,34 +98,33 @@ public class EditDistance implements EditDistanceInterface {
 			else if (i>0 && j>0 && s1.charAt(i-1)!=s2.charAt(j-1)&&tab[i][j]==tab[i-1][j-1]+this.c_r){
 				i--;
 				j--;
-				path.addLast("r"+(i)+s2.charAt(j));
+				path.addFirst("r"+(i)+s2.charAt(j));
 				
 				
 			}
 			else if (i>0 && tab[i][j]==tab[i-1][j]+this.c_d){
 				i--;
-				path.addLast("d"+i);
+				path.addFirst("d"+i);
 				
 				
 			}
 			else if (j>0 && tab[i][j]==tab[i][j-1]+this.c_i){
-				path.addLast("i"+(i)+s2.charAt(j-1));
+				path.addFirst("i"+(i)+s2.charAt(j-1));
 				j--;
 			}
-			System.out.println(i+ " "+j);
 		}
 			int compteur=0;
 			LinkedList<String> finalPath = new LinkedList<String>();
 			for (String s : path){
 				if (s.charAt(0)=='r'){
-					finalPath.addLast("replace("+(Character.getNumericValue(s.charAt(1))+compteur)+","+s.charAt(2)+")");
+					finalPath.addLast("replace("+(Integer.parseInt(s.substring(1,s.length()-1))+compteur)+","+s.charAt(s.length()-1)+")");
 				}
 				else if (s.charAt(0)=='d'){
-					finalPath.addLast("delete("+(Character.getNumericValue(s.charAt(1))+compteur)+")");
+					finalPath.addLast("delete("+(Integer.parseInt(s.substring(1))+compteur)+")");
 					compteur--;
 				}
 				else if (s.charAt(0)=='i'){
-					finalPath.addLast("insert("+(Character.getNumericValue(s.charAt(1))+compteur)+","+s.charAt(2)+")");
+					finalPath.addLast("insert("+(Integer.parseInt(s.substring(1, s.length()-1))+compteur)+","+s.charAt(s.length()-1)+")");
 					compteur++;
 				}
 			}
