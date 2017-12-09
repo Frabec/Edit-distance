@@ -76,10 +76,8 @@ public class EditDistance implements EditDistanceInterface {
 
 	public List<String> getMinimalEditSequence(String s1, String s2) {
 		int x=1;
-		int compteur=s2.length()-1;
 		int i=s1.length();
 		int j=s2.length();
-		String current=s2;
 		int[][] tab;
 		int trueValue= getEditDistanceDPminimal(s1, s2);
 		LinkedList<String> path = new LinkedList<String>();
@@ -90,39 +88,51 @@ public class EditDistance implements EditDistanceInterface {
 			}
 			x++;
 		}
+		Test.affiche(getEditDistanceDP(s1, s2));
 		//we find the path
-		while (true){
-			if (compteur==0){
-				return path;
-			}
-			if (i>0&&j>0&&tab[i][j]==tab[i-1][j-1]){
+		while (i!=0 || j!=0){
+			
+			if (i>0 && j>0 && s1.charAt(i-1)==s2.charAt(j-1)&&tab[i][j]==tab[i-1][j-1]){
 				i--;
 				j--;
-				compteur--;
-				
 			}
-			else if (i>0&&j>0&&tab[i][j]==tab[i-1][j-1]+this.c_r){
+			else if (i>0 && j>0 && s1.charAt(i-1)!=s2.charAt(j-1)&&tab[i][j]==tab[i-1][j-1]+this.c_r){
 				i--;
 				j--;
-				path.addFirst("replace("+(compteur)+","+current.charAt(compteur)+")");
-				compteur--;
-				
+				path.addLast("r"+(i)+s2.charAt(j));
 				
 				
 			}
-			else if (i>0&&tab[i][j]==tab[i-1][j]+this.c_d){
+			else if (i>0 && tab[i][j]==tab[i-1][j]+this.c_d){
 				i--;
-				path.addFirst("delete"+"("+(compteur)+")");
+				path.addLast("d"+i);
 				
 				
 			}
-			else if (j>0&&tab[i][j]==tab[i][j-1]+this.c_i){
+			else if (j>0 && tab[i][j]==tab[i][j-1]+this.c_i){
+				path.addLast("i"+(i)+s2.charAt(j-1));
 				j--;
-				compteur--;
-				path.addFirst("insert("+(compteur)+","+current.charAt(compteur)+")");
-				
 			}
+			System.out.println(i+ " "+j);
 		}
+			int compteur=0;
+			LinkedList<String> finalPath = new LinkedList<String>();
+			for (String s : path){
+				if (s.charAt(0)=='r'){
+					finalPath.addLast("replace("+(Character.getNumericValue(s.charAt(1))+compteur)+","+s.charAt(2)+")");
+				}
+				else if (s.charAt(0)=='d'){
+					finalPath.addLast("delete("+(Character.getNumericValue(s.charAt(1))+compteur)+")");
+					compteur--;
+				}
+				else if (s.charAt(0)=='i'){
+					finalPath.addLast("insert("+(Character.getNumericValue(s.charAt(1))+compteur)+","+s.charAt(2)+")");
+					compteur++;
+				}
+			}
+			
+		
+		return finalPath;
 	}
 
 	
